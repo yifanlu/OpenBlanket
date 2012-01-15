@@ -325,7 +325,7 @@ int module_screensaver_prerender(struct Module *module, struct Context *ctx, int
 		free(image_path);
 		s_width = blanket_image_screenwidth();
 		s_height = blanket_image_screenheight();
-		cairo_set_source_surface(ctx->ss_cr, surface, s_width, s_height);
+		cairo_set_source_surface(ctx->ss_cr, surface, s_width - width, s_height - height);
 		cairo_paint(ctx->ss_cr);
 		cairo_surface_destroy(surface);
 		cairo_destroy(context);
