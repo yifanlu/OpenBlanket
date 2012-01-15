@@ -27,6 +27,12 @@
 
 extern int g_blanket_llog_mask;
 
+#define DEBUG_LOG 0x8000
+#define INFO_LOG 0x800000
+#define WARNING_LOG 0x1000000
+#define ERROR_LOG 0x2000000
+#define IS_LOGGING(log) ((g_blanket_llog_mask & log) == log)
+
 struct lipc_event {
 	const char *lipc_source;
 	const char *lipc_eventName;

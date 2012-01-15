@@ -34,7 +34,7 @@ int init(void *config, struct Module *module, struct Context **ctxp)
 	ctx = calloc(sizeof(struct Context), 1);
 	if(ctx == 0)
 	{
-		if(g_blanket_llog_mask & 0x2000000)
+		if(IS_LOGGING(ERROR_LOG))
 		{
 			syslog(LOG_ERR, "E %s:OUT_OF_MEMORY::failed to allocate %s", "init", "ctx");
 		}
@@ -85,7 +85,7 @@ int deinit(void *config, struct Module *module, struct Context *ctx)
 	int errno;
 	if((errno = module_screensaver_unmap(module, 0, ctx)) != 0)
 	{
-		if(g_blanket_llog_mask & 0x2000000)
+		if(IS_LOGGING(ERROR_LOG))
 		{
 			syslog(LOG_ERR, "E screensaver:UNMAP_FAILED:err=%d:%s", errno, strerror(errno));
 		}
@@ -104,9 +104,9 @@ int deinit(void *config, struct Module *module, struct Context *ctx)
 
 int module_screensaver_unmap(struct Module *module, int unused, struct Context *ctx)
 {
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_unmap", 0x18B);
+		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_unmap", __LINE__);
 	}
 	
 	if(ctx != NULL)
@@ -117,9 +117,9 @@ int module_screensaver_unmap(struct Module *module, int unused, struct Context *
 	ctx->mapped = 0;
 	ctx->type = 0;
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_unmap", 0x192);
+		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_unmap", __LINE__);
 	}
 	
 	return 0;
@@ -129,34 +129,36 @@ int module_screensaver_map_screensaver(struct Module *module, int unused, struct
 {
 	int errno;
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_map_screensaver", 0x162);
+		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_map_screensaver", __LINE__);
 	}
 	
 	if((errno = module_screensaver_map_generic(module, ctx, 1)) != 0)
 	{
-		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_map_screensaver", 0x164);
-		return errno;
+		if(IS_LOGGING(DEBUG_LOG))
+		{
+			syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_map_screensaver", __LINE__);
+		}
 	}
 	
-	return 0;
+	return errno;
 }
 
 int module_screensaver_map_blank(struct Module *module, int unused, struct Context *ctx)
 {
 	int ret;
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_map_blank", 0x177);
+		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_map_blank", __LINE__);
 	}
 	
 	ret = module_screensaver_map_generic(module, ctx, 2);
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_map_blank", 0x14F);
+		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_map_blank", __LINE__);
 	}
 	
 	return ret;
@@ -166,14 +168,14 @@ int module_screensaver_map_generic(struct Module *module, struct Context *ctx, i
 {
 	int ret;
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_map_generic", 0x131);
+		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_map_generic", __LINE__);
 	}
 	
 	if(module == NULL)
 	{
-		if(g_blanket_llog_mask & 0x2000000)
+		if(IS_LOGGING(ERROR_LOG))
 		{
 			syslog(LOG_ERR, "E %s:BAD_ARGS::argument is not valid, require %s", "module_screensaver_map_generic", "(module != NULL)");
 		}
@@ -182,7 +184,7 @@ int module_screensaver_map_generic(struct Module *module, struct Context *ctx, i
 	}
 	else if(ctx == 0)
 	{
-		if(g_blanket_llog_mask & 0x2000000)
+		if(IS_LOGGING(ERROR_LOG))
 		{
 			syslog(LOG_ERR, "E %s:BAD_ARGS::argument is not valid, require %s", "module_screensaver_map_generic", "(ctx != NULL)");
 		}
@@ -192,7 +194,7 @@ int module_screensaver_map_generic(struct Module *module, struct Context *ctx, i
 	{
 		if((ret = module_screensaver_prerender(module, ctx, type)) != 0)
 		{
-			if(g_blanket_llog_mask & 0x2000000)
+			if(IS_LOGGING(ERROR_LOG))
 			{
 				syslog(LOG_ERR, "E screensaver:PRERENDER_FAILED:err=%d,type=%d:%s", ret, type, strerror(ret));
 			}
@@ -214,7 +216,7 @@ int module_screensaver_map_generic(struct Module *module, struct Context *ctx, i
 		{
 			if((ret = module_screensaver_prerender(module, ctx, type)) != 0)
 			{
-				if(g_blanket_llog_mask & 0x2000000)
+				if(IS_LOGGING(ERROR_LOG))
 				{
 					syslog(LOG_ERR, "E screensaver:PRERENDER_FAILED:err=%d,type=%d:%s", ret, type, strerror(ret));
 				}
@@ -226,9 +228,9 @@ int module_screensaver_map_generic(struct Module *module, struct Context *ctx, i
 		}
 	}
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_map_generic", 0x14F);
+		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_map_generic", __LINE__);
 	}
 	
 	return ret;
@@ -247,14 +249,14 @@ int module_screensaver_prerender(struct Module *module, struct Context *ctx, int
 	int s_width;
 	int s_height;
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_prerender", 0xF6);
+		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_prerender", __LINE__);
 	}
 	
 	if(module == NULL)
 	{
-		if(g_blanket_llog_mask & 0x2000000)
+		if(IS_LOGGING(ERROR_LOG))
 		{
 			syslog(LOG_ERR, "E %s:BAD_ARGS::argument is not valid, require %s", "module_screensaver_prerender", "(module != NULL)");
 		}
@@ -262,7 +264,7 @@ int module_screensaver_prerender(struct Module *module, struct Context *ctx, int
 	}
 	else if(ctx == NULL)
 	{
-		if(g_blanket_llog_mask & 0x2000000)
+		if(IS_LOGGING(ERROR_LOG))
 		{
 			syslog(LOG_ERR, "E %s:BAD_ARGS::argument is not valid, require %s", "module_screensaver_prerender", "(ctx != NULL)");
 		}
@@ -273,7 +275,7 @@ int module_screensaver_prerender(struct Module *module, struct Context *ctx, int
 		ctx->type = type;
 		if(type < 1)
 		{
-			if(g_blanket_llog_mask & 0x2000000)
+			if(IS_LOGGING(ERROR_LOG))
 			{
 				syslog(LOG_ERR, "E screensaver:INVALID_SCREEN_SELECTED:type=%d:screen type is not valid", type);
 			}
@@ -295,17 +297,17 @@ int module_screensaver_prerender(struct Module *module, struct Context *ctx, int
 	{
 		module_screensaver_nextScreenSaverName(current_name);
  		image_path = blanket_image_get_asset_name("screensaver", current_name, "bg", "png");
-		surface = cairo_image_surface_create_from_png(current_name);
+		surface = cairo_image_surface_create_from_png(image_path);
 		width = 0;
 		height = 0;
 		context = NULL;
 		if((c_err = cairo_surface_status(surface)) != 0)
 		{
-			if(g_blanket_llog_mask & 0x2000000)
+			if(IS_LOGGING(ERROR_LOG))
 			{
 				syslog(LOG_ERR, "E %s:CAIRO_FAILED:sts=%d:%s", "module_screensaver_prerender", c_err, cairo_status_to_string(c_err));
 			}
-			if(g_blanket_llog_mask & 0x2000000)
+			if(IS_LOGGING(ERROR_LOG))
 			{
 				syslog(LOG_ERR, "E %s:CAIRO_SURFACE_CREATE_FAILED:png=%s:", "module_screensaver_prerender", image_path); 
 			}
@@ -315,9 +317,9 @@ int module_screensaver_prerender(struct Module *module, struct Context *ctx, int
 			width = cairo_image_surface_get_width(surface);
 			height = cairo_image_surface_get_height(surface);
 			context = cairo_create(surface);
-			if(g_blanket_llog_mask | 0x100)
+			if(IS_LOGGING(DEBUG_LOG))
 			{
-				syslog(LOG_DEBUG, "D def:Image %s is %dx%d pixels (%s:%s:%d)", image_path, width, height, "module_screensaver_prerender", "/home/build/src/yoshi/juno/OFFICIAL/platform/bin/blanket/loaders", 0x104);
+				syslog(LOG_DEBUG, "D def:Image %s is %dx%d pixels (%s:%s:%d)", image_path, width, height, "module_screensaver_prerender", "/home/build/src/yoshi/juno/OFFICIAL/platform/bin/blanket/loaders", __LINE__);
 			}
 		}
 		free(image_path);
@@ -330,9 +332,9 @@ int module_screensaver_prerender(struct Module *module, struct Context *ctx, int
 		ret = 0;
 	}
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_prerender", 0x14F);
+		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_prerender", __LINE__);
 	}
 	return ret;
 }
@@ -346,21 +348,21 @@ void module_screensaver_nextScreenSaverName(char current_namep[5])
 	struct stat sb;
 	char *image_path;
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_nextScreenSaverName", 0x6C);
+		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_nextScreenSaverName", __LINE__);
 	}
 	
 	if((errno = g_mkdir_with_parents("/var/local/blanket/screensaver", S_IRWXU)) < 0)
 	{
-		if(g_blanket_llog_mask & 0x2000000)
+		if(IS_LOGGING(ERROR_LOG))
 		{
 			syslog(LOG_ERR, "E screensaver:MKDIR_WITH_PARENTS_FAILED:err=%d,path=%s,mode=%d:%s", errno, "/var/local/blanket/screensaver", S_IRWXU, strerror(errno));
 		}
 	}
 	if((fd = open("/var/local/blanket/screensaver/last_ss", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)) < 0)
 	{
-		if(g_blanket_llog_mask & 0x2000000)
+		if(IS_LOGGING(ERROR_LOG))
 		{
 			syslog(LOG_ERR, "E %s:OPEN_FILE_FAILED:err=%d,path=%s,mode=%d:%s", "module_screensaver_nextScreenSaverName", fd, "/var/local/blanket/screensaver/last_ss", O_CREAT | O_RDWR, strerror(fd));
 		}
@@ -377,7 +379,7 @@ void module_screensaver_nextScreenSaverName(char current_namep[5])
 		image_path = blanket_image_get_asset_name("screensaver", current_name, "bg", "png");
 		if(image_path == NULL)
 		{
-			if(g_blanket_llog_mask & 0x2000000)
+			if(IS_LOGGING(ERROR_LOG))
 			{
 				syslog(LOG_ERR, "E %s:DOES_NOT_EXIST:object=%s:", "module_screensaver_nextScreenSaverName", "bg_path");
 			}
@@ -387,7 +389,7 @@ void module_screensaver_nextScreenSaverName(char current_namep[5])
 		{
 			if((errno = stat(image_path, &sb)) < 0)
 			{
-				if(g_blanket_llog_mask & 0x2000000)
+				if(IS_LOGGING(ERROR_LOG))
 				{
 					syslog(LOG_ERR, "E screensaver:STAT_FAILED:err=%d,path=%s:%s", errno, image_path, strerror(errno));
 				}
@@ -397,7 +399,7 @@ void module_screensaver_nextScreenSaverName(char current_namep[5])
 			{
 				if(!S_ISREG(sb.st_mode))
 				{
-					if(g_blanket_llog_mask & 0x2000000)
+					if(IS_LOGGING(ERROR_LOG))
 					{
 						syslog(LOG_ERR, "E screensaver:FILE_IS_NOT_REGULAR:path=%s,mode=%d:", image_path, S_ISREG(sb.st_mode));
 					}
@@ -426,7 +428,7 @@ void module_screensaver_nextScreenSaverName(char current_namep[5])
 			}
 			if((fd = open("/var/local/blanket/screensaver/last_ss", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)) < 0)
 			{
-				if(g_blanket_llog_mask & 0x2000000)
+				if(IS_LOGGING(ERROR_LOG))
 				{
 						syslog(LOG_ERR, "E %s:OPEN_FILE_FAILED:err=%d,path=%s,mode=%d:%s", "module_screensaver_nextScreenSaverName", fd, "/var/local/blanket/screensaver/last_ss", O_CREAT | O_RDWR, strerror(fd));
 				}
@@ -441,9 +443,9 @@ void module_screensaver_nextScreenSaverName(char current_namep[5])
 	
 	strcpy(current_namep, current_name);
 		
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_nextScreenSaverName", 0xE7);
+		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_nextScreenSaverName", __LINE__);
 	}
 }
 
@@ -451,14 +453,14 @@ int module_screensaver_repaint(struct Module *module, XEvent *xev, struct Contex
 {
 	int ret;
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_repaint", 0x1A4);
+		syslog(LOG_DEBUG, "D def:enter:%s:%d", "module_screensaver_repaint", __LINE__);
 	}
 	
 	if(ctx->mapped == 0)
 	{
-		if(g_blanket_llog_mask & 0x8000)
+		if(IS_LOGGING(DEBUG_LOG))
 		{
 			syslog(LOG_DEBUG, "D screensaver:XEVENT_WHEN_UNMAPPED:type=%d:exiting repaint", xev->type);
 		}
@@ -471,7 +473,7 @@ int module_screensaver_repaint(struct Module *module, XEvent *xev, struct Contex
 		}
 		else if(ctx->ss_cr == NULL)
 		{
-			if(g_blanket_llog_mask & 0x2000000)
+			if(IS_LOGGING(ERROR_LOG))
 			{
 				syslog(LOG_ERR, "E %s:DOES_NOT_EXIST:object=%s:", "module_screensaver_repaint", "ctx->ss_cr");
 			}
@@ -484,16 +486,16 @@ int module_screensaver_repaint(struct Module *module, XEvent *xev, struct Contex
 	}
 	else
 	{
-		if(g_blanket_llog_mask & 0x1000000)
+		if(IS_LOGGING(WARNING_LOG))
 		{
 			syslog(4, "W screensaver:UNHANDLED_X11_EVENT:type=%d:", xev->type);
 		}
 		ret = 38;
 	}
 	
-	if(g_blanket_llog_mask & 0x8000)
+	if(IS_LOGGING(DEBUG_LOG))
 	{
-		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_repaint", 0x1CE);
+		syslog(LOG_DEBUG, "D def:leave:%s:%d", "module_screensaver_repaint", __LINE__);
 	}
 	
 	return ret;
