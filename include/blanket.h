@@ -57,14 +57,6 @@ struct Module {
 	int unk2;
 };
 
-struct Context {
-	int mapped;
-	int type;
-	cairo_t *ss_cr;
-	cairo_surface_t *surface;
-	Window window;
-};
-
 char *blanket_image_get_asset_name(const char *stem, char *name, const char *type, const char *ext);
 void blanket_image_get_window(struct Module *module, Window *windowp, const char *name, int, int);
 int blanket_image_gettext_draw_defaults(cairo_t *cr, const char *prefix, PangoAlignment alignment, int, void *);

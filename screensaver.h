@@ -32,6 +32,14 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+struct Context {
+	int mapped;
+	int type;
+	cairo_t *ss_cr;
+	cairo_surface_t *surface;
+	Window window;
+};
+
 int init(void *config, struct Module *module, struct Context **ctxp);
 int deinit(void *config, struct Module *module, struct Context *ctx);
 int module_screensaver_unmap(struct Module *module, int unused, struct Context *ctx);
