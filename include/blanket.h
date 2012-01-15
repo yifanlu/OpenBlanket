@@ -21,9 +21,11 @@
 #ifndef BLANKET
 #define BLANKET
 
-#include <cairo.h>
+#include <cairo/cairo.h>
 #include <pango/pango.h>
 #include <X11/Xlib.h>
+
+extern int g_blanket_llog_mask;
 
 struct lipc_event {
 	const char *lipc_source;
@@ -58,7 +60,7 @@ struct Context {
 };
 
 char *blanket_image_get_asset_name(const char *stem, char *name, const char *type, const char *ext);
-void blanket_image_get_window(struct Module *module, Window **windowp, const char *name, int, int);
+void blanket_image_get_window(struct Module *module, Window *windowp, const char *name, int, int);
 int blanket_image_gettext_draw_defaults(cairo_t *cr, const char *prefix, PangoAlignment alignment, int, void *);
 int blanket_image_gettext_pango_rect(const char *mid, PangoRectangle *rect);
 void blanket_image_progressbar_destroy(void *handle);
